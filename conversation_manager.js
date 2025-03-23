@@ -972,7 +972,18 @@
     if (cbox && !cbox.classList.contains("open")) {
       cbox.classList.add("open");
     }
-    cbox.scrollIntoView({ behavior: "smooth", block: "start" });
+    const cbox = target.closest(".content-box");
+if (cbox) {
+  const rect = cbox.getBoundingClientRect();
+  const headerOffset = 160; // 고정 헤더 높이에 맞게 조정 (필요 시 변경)
+  const scrollToPosition = window.pageYOffset + rect.top - headerOffset;
+  window.scrollTo({ top: scrollToPosition, behavior: "smooth" });
+  // 페이지 스크롤 후 대화 박스 내부의 첫 하이라이트로 이동
+  setTimeout(() => {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 500); // 500ms 후 실행 (필요에 따라 조정)
+}
+
     let cumulative = 0;
     for (let i = 0; i <= App.currentGroupIndex; i++) {
       cumulative += App.highlightGroups[i].length;
