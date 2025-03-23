@@ -1,5 +1,9 @@
 # miko
 
+누군가의 공부와 일상, 그리고 성장의 여정에 이 도구가 작은 힘이 되었으면 좋겠습니다.
+I hope this tool supports someone’s journey of learning, reflection, and growth — even in a small way.
+
+
 # ChatGPT 대화관리도구.js   | ChatGPT Conversation Organizer
 
 
