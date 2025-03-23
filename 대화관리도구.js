@@ -974,7 +974,7 @@ function applySearchSortingAndIntensity() {
     if (cbox && !cbox.classList.contains("open")) {
       cbox.classList.add("open");
     }
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    cbox.scrollIntoView({ behavior: "smooth", block: "start" });
     let cumulative = 0;
     for (let i = 0; i <= App.currentGroupIndex; i++) {
       cumulative += App.highlightGroups[i].length;
