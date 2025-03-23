@@ -86,10 +86,10 @@ A JavaScript utility that extracts only the user's questions from a ChatGPT-expo
    Open the HTML file in your browser and launch DevTools (F12 or Ctrl+Shift+I).
 
 3. Console 탭에 `질문추출도구.js`의 내용을 붙여넣고 Enter 키를 누릅니다.  
-   Paste the contents of `conversation_manager.js` into the Console tab and press Enter.
+   Paste the contents of `question_extraction.js` into the Console tab and press Enter.
 
-4. 화면에 질문 목록이 출력됩니다. 복사하거나 저장해서 활용하세요.  
-   The list of your questions will appear on the screen — copy or save them as needed.
+4. 스니펫을 적용하면 질문만 모아 놓은 html 파일이 바로 저장이 됩니다.  
+   Just run the snippet — your questions will be saved in a file right away!
 
 ---
 
