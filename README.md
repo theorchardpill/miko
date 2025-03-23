@@ -31,7 +31,7 @@ Export your ChatGPT conversation as HTML.
 Open Chrome DevTools (F12 or Ctrl+Shift+I).
 
 ### 3. "Console" 탭에서 스크립트 붙여넣기  
-Paste the contents of `chatgpt_대화관리도구.js` into the Console tab and press Enter.
+Paste the contents of `conversation_manager.js` into the Console tab and press Enter.
 
 대화 페이지가 정돈된 인터페이스로 변환됩니다.  
 The conversation will be enhanced with an improved interface.
@@ -86,7 +86,7 @@ A JavaScript utility that extracts only the user's questions from a ChatGPT-expo
    Open the HTML file in your browser and launch DevTools (F12 or Ctrl+Shift+I).
 
 3. Console 탭에 `질문추출도구.js`의 내용을 붙여넣고 Enter 키를 누릅니다.  
-   Paste the contents of `질문추출도구.js` into the Console tab and press Enter.
+   Paste the contents of `conversation_manager.js` into the Console tab and press Enter.
 
 4. 화면에 질문 목록이 출력됩니다. 복사하거나 저장해서 활용하세요.  
    The list of your questions will appear on the screen — copy or save them as needed.
