@@ -48,5 +48,5 @@ Free to use, modify, and distribute, but please keep the creator credit and lice
 
 ## 제작자 | Author
 
-빈센 
+빈센 (Vincent)
 (https://mikkorimimi.blogspot.com/)
