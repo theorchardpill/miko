@@ -1,7 +1,8 @@
 # miko
 
-누군가의 공부와 일상, 그리고 성장의 여정에 이 도구가 작은 힘이 되었으면 좋겠습니다.  
-_I hope this tool supports someone’s journey of learning, reflection, and growth — even in a small way._
+ChatGPT와의 여정에서 이 도구가 유용하고 의미가 있길 바랍니다.  
+_Built in collaboration with ChatGPT through real, hands-on refinement, this snippet reflects a real user’s needs.
+I hope it makes your experience a little easier and more meaningful._
 
 ---
 
