@@ -5,7 +5,7 @@
 I hope this tool supports someone’s journey of learning, reflection, and growth — even in a small way.
 
 
-# ChatGPT 대화관리도구.js   | ChatGPT Conversation Organizer
+## 🧾 ChatGPT 대화관리도구.js   | ChatGPT Conversation Organizer
 
 
 ChatGPT에서 HTML로 내보낸 대화를 더 쉽게 읽고, 검색하고, 정리할 수 있게 도와주는 간단한 자바스크립트 유틸리티입니다.  
