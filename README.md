@@ -16,6 +16,8 @@ ChatGPT에서 HTML로 내보낸 대화를 더 쉽게 읽고, 검색하고, 정�
 A simple JavaScript utility to enhance, search, and organize ChatGPT-exported HTML conversations.
 
 
+
+
 ## 주요 기능 | Features
 
 - 대화 내용 검색 (질문/답변 필터링)
@@ -27,6 +29,8 @@ A simple JavaScript utility to enhance, search, and organize ChatGPT-exported HT
 - Edit or delete individual message blocks
 - Clean and readable layout
 - Works directly in the browser without modifying the HTML structure
+
+
 
 
 ## 사용 방법 | How to Use
@@ -44,6 +48,8 @@ Paste the contents of `conversation_manager.js` into the Console tab and press E
 The conversation will be enhanced with an improved interface.
 
 
+
+
 ### 📄 라이선스 | License
 
 MIT License  
@@ -54,6 +60,8 @@ _Free to use, modify, and distribute — just keep the creator credit and licens
 
 Vincent  
 🔗 https://mikkorimimi.blogspot.com/
+
+
 ---
 
 
@@ -67,6 +75,8 @@ ChatGPT에서 내보낸 HTML 대화 파일에서 **사용자가 입력한 질문
 별도 화면에 깔끔하게 출력하고, 자동으로 저장해주는 스니펫입니다.  
 A lightweight JavaScript snippet that extracts only the user's questions from a ChatGPT-exported HTML file and saves them cleanly.
 
+
+
 ### ✨ 주요 기능 | Features
 
 - 사용자 질문만 자동 추출  
@@ -78,6 +88,8 @@ A lightweight JavaScript snippet that extracts only the user's questions from a 
 - Useful for reviewing, summarizing, or reusing prompts  
 - Displays results in a clean, minimal layout  
 - Runs in the browser without altering the original HTML
+
+
 
 ### 🛠️ 사용 방법 | How to Use
 
