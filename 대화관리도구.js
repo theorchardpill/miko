@@ -3,7 +3,7 @@
  * 버전: 1.0.0
  * 설명: ChatGPT에서 내보낸 HTML 대화 파일을 보기 좋게 정리하고, 검색/수정/삭제 기능을 추가해주는 유틸리티입니다.
  *
- * 제작자: 빈센 (Vincen)
+ * 제작자: 빈센 (Vincent)
  * 블로그: https://mikkorimimi.blogspot.com/
  *
  * 라이선스: MIT License
