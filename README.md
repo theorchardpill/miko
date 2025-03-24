@@ -5,7 +5,7 @@
 I hope this tool supports someone’s journey of learning, reflection, and growth — even in a small way.
 
 
-
+<hr>
 
 ## 🧾 ChatGPT 대화관리도구.js   | ChatGPT Conversation Organizer
 
