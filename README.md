@@ -13,7 +13,6 @@ I hope this tool supports someone’s journey of learning, reflection, and growt
 ChatGPT에서 HTML로 내보낸 대화를 더 쉽게 읽고, 검색하고, 정리할 수 있게 도와주는 간단한 자바스크립트 유틸리티입니다.  
 A simple JavaScript utility to enhance, search, and organize ChatGPT-exported HTML conversations.
 
----
 
 ## 주요 기능 | Features
 
@@ -27,7 +26,6 @@ A simple JavaScript utility to enhance, search, and organize ChatGPT-exported HT
 - Clean and readable layout
 - Works directly in the browser without modifying the HTML structure
 
----
 
 ## 사용 방법 | How to Use
 
@@ -43,7 +41,6 @@ Paste the contents of `conversation_manager.js` into the Console tab and press E
 대화 페이지가 정돈된 인터페이스로 변환됩니다.  
 The conversation will be enhanced with an improved interface.
 
----
 
 ### 📄 라이선스 | License
 
