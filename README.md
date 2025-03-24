@@ -45,18 +45,16 @@ The conversation will be enhanced with an improved interface.
 
 ---
 
-## 라이선스 | License
+### 📄 라이선스 | License
 
 MIT License  
-자유롭게 사용/수정/배포 가능하나, 제작자 표기와 라이선스 고지를 포함해 주세요.  
-Free to use, modify, and distribute, but please keep the creator credit and license notice.
+자유롭게 사용, 수정, 배포할 수 있으며, 제작자 표기와 라이선스 고지를 유지해 주세요.  
+_Free to use, modify, and distribute — just keep the creator credit and license notice._
 
----
+### 👤 제작자 | Author
 
-## 제작자 | Author
-
-빈센 (Vincent)
-(https://mikkorimimi.blogspot.com/)
+Vincent  
+🔗 https://mikkorimimi.blogspot.com/
 
 
 
