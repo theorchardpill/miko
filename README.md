@@ -58,6 +58,7 @@ Free to use, modify, and distribute, but please keep the creator credit and lice
 
 
 <hr>
+<p style="text-align:center; font-weight:bold; font-size: 1.1em; margin:1em 0;">🔻 New Topic</p
 
 
 
