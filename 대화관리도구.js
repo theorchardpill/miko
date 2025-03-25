@@ -1,32 +1,33 @@
 /**
- * ChatGPT 대화관리도구.js
+ * ChatGPT 대화관리도구.js | ChatGPT 대화 정리 도구
  * 버전: 1.0.0
- * 설명: ChatGPT에서 내보낸 HTML 대화 파일을 보기 좋게 정리하고, 검색/수정/삭제 기능을 추가해주는 유틸리티입니다.
+ * 설명: 이 유틸리티 스크립트는 ChatGPT로 내보낸 HTML 대화 내용을
+ * 보다 읽기 쉽고, 검색하기 편하며, 상호작용할 수 있도록 개선합니다.
  *
- * 제작자: 빈센 (Vincent)
+ * 작성자: Vincent
  * 블로그: https://mikkorimimi.blogspot.com/
  *
- * 라이선스: MIT License
+ * 라이선스: MIT 라이선스
  *
- * Copyright (c) 2025 빈센
+ * 저작권 (c) 2025 Vincent
  *
- * 본 소프트웨어 및 관련 문서 파일(이하 "소프트웨어")의 사본을 취득하는 모든 사람에게,
- * 소프트웨어를 제한 없이 사용, 복사, 수정, 병합, 게시, 배포, 서브라이선스 및 판매할 수 있는 권한을 무료로 부여합니다.
- * 또한 소프트웨어가 제공된 대상에게 동일한 권한을 허용할 수 있습니다.
+ * 본 소프트웨어 및 관련 문서 파일(이하 "소프트웨어")의 복사본을 취득한
+ * 모든 사람에게 본 소프트웨어를 제한 없이 사용, 복사, 수정, 병합, 발행,
+ * 배포, 서브라이센스 및/또는 판매할 수 있는 권한을 무상으로 부여합니다.
+ * 단, 소프트웨어의 복사본이나 상당 부분에 위의 저작권 고지 및 본 허가 고지가
+ * 포함되어야 합니다.
  *
- * 단, 위 저작권 고지 및 이 허가 고지를 소프트웨어의 모든 사본 또는 주요 부분에 반드시 포함해야 합니다.
- *
- * 이 소프트웨어는 상품성, 특정 목적에의 적합성, 권리 비침해 여부에 대한 보증 없이 "있는 그대로(as is)" 제공됩니다.
- * 어떠한 경우에도 저작권자 또는 권리 보유자는 계약, 불법행위 또는 기타 행위로 인해
- * 소프트웨어 또는 소프트웨어의 사용이나 기타 처리와 관련하여 발생하는 손해나 기타 책임에 대해 책임을 지지 않습니다.
+ * 본 소프트웨어는 어떠한 종류의 명시적 또는 묵시적 보증 없이 "있는 그대로"
+ * 제공되며, 상품성, 특정 목적에의 적합성 및 비침해에 대한 보증을 포함하되 이에 국한되지 않습니다.
+ * 어떠한 경우에도 계약, 불법 행위 또는 기타 원인에 의해 발생하는 손해에 대해
+ * 저자 또는 저작권 보유자는 책임을 지지 않습니다.
  */
-
 
 (function(){
   "use strict";
 
   // ============================================
-  // 0. 유틸리티 및 전역 상태 객체 (App)
+  // 0. 유틸리티 함수 및 전역 상태 (App)
   // ============================================
   const App = {
     undoStack: [],
@@ -34,21 +35,21 @@
     highlightGroups: [],
     currentGroupIndex: 0,
     searchCounts: new Map(),
-    originalOrder: [], // { index, container } 객체 배열
+    originalOrder: [], // 객체 배열: { index, container }
   };
 
   function pushUndo(action) { App.undoStack.push(action); }
   function popUndo() { return App.undoStack.pop(); }
 
   // ============================================
-  // 1. #root 요소 보장 (없으면 생성)
+  // 1. #root 엘리먼트 확인 (없으면 생성)
   // ============================================
   let root = document.getElementById("root");
   if (!root) {
     root = document.createElement("div");
     root.id = "root";
     document.body.appendChild(root);
-    console.info("#root 요소가 없어 새로 생성했습니다.");
+    console.info("존재하지 않아 새 #root 엘리먼트를 생성했습니다.");
   }
 
   // ============================================
@@ -334,17 +335,17 @@
   }
 
   // ============================================
-  // 3. 상단 컨트롤 박스 및 수정 모달 생성
+  // 3. 상단 기능 탭 및 수정 모달 생성
   // ============================================
   if (!document.querySelector(".toggle-controls")) {
     const controls = document.createElement("div");
     controls.classList.add("toggle-controls");
 
-    // 검색 입력창
+    // 검색 입력란
     const searchBox = document.createElement("input");
     searchBox.type = "text";
     searchBox.id = "searchInput";
-    searchBox.placeholder = "키워드(,로 구분)";
+    searchBox.placeholder = "키워드 (쉼표로 구분)";
     searchBox.classList.add("search-box");
 
     // AND/OR 라디오 버튼
@@ -354,7 +355,7 @@
     radioAnd.id = "searchLogicAnd";
     radioAnd.value = "AND";
     const labelAnd = document.createElement("label");
-    labelAnd.textContent = "AND";
+    labelAnd.textContent = "그리고";
     labelAnd.setAttribute("for", "searchLogicAnd");
 
     const radioOr = document.createElement("input");
@@ -364,22 +365,22 @@
     radioOr.value = "OR";
     radioOr.checked = true;
     const labelOr = document.createElement("label");
-    labelOr.textContent = "OR";
+    labelOr.textContent = "또는";
     labelOr.setAttribute("for", "searchLogicOr");
 
-    // 대소문자, 정규식 체크박스
+    // 대/소문자 구분 및 정규식 체크박스
     const caseCheck = document.createElement("input");
     caseCheck.type = "checkbox";
     caseCheck.id = "caseSensitiveCheck";
     const labelCase = document.createElement("label");
-    labelCase.textContent = "CaseSensitive";
+    labelCase.textContent = "대/소문자 구분";
     labelCase.setAttribute("for", "caseSensitiveCheck");
 
     const regexCheck = document.createElement("input");
     regexCheck.type = "checkbox";
     regexCheck.id = "regexCheck";
     const labelRegex = document.createElement("label");
-    labelRegex.textContent = "Regex";
+    labelRegex.textContent = "정규식";
     labelRegex.setAttribute("for", "regexCheck");
 
     // 다크 모드 토글
@@ -387,13 +388,13 @@
     darkModeCheck.type = "checkbox";
     darkModeCheck.id = "darkModeCheck";
     const labelDark = document.createElement("label");
-    labelDark.textContent = "DarkMode";
+    labelDark.textContent = "다크 모드";
     labelDark.setAttribute("for", "darkModeCheck");
 
     // 버튼들
     const expandAllBtn = document.createElement("button");
     expandAllBtn.id = "expandAllBtn";
-    expandAllBtn.textContent = "전체 펼치기";
+    expandAllBtn.textContent = "전체 확장";
 
     const collapseAllBtn = document.createElement("button");
     collapseAllBtn.id = "collapseAllBtn";
@@ -401,16 +402,16 @@
 
     const sortByCountBtn = document.createElement("button");
     sortByCountBtn.id = "sortByCountBtn";
-    sortByCountBtn.textContent = "검색 개수 순 정렬";
+    sortByCountBtn.textContent = "매칭 수로 정렬";
 
     const resetOrderBtn = document.createElement("button");
     resetOrderBtn.id = "resetOrderBtn";
     resetOrderBtn.textContent = "원래 순서 복원";
 
-    // 검색 초기화 버튼 – 검색 하이라이트만 제거 (원래 순서 복원 호출 X)
+    // 검색 지우기 버튼 – 검색 하이라이트만 제거(순서는 복원하지 않음)
     const clearSearchBtn = document.createElement("button");
     clearSearchBtn.id = "clearSearchBtn";
-    clearSearchBtn.textContent = "검색 초기화";
+    clearSearchBtn.textContent = "검색 지우기";
 
     const highlightPrevBtn = document.createElement("button");
     highlightPrevBtn.id = "highlightPrevBtn";
@@ -422,12 +423,12 @@
 
     const undoBtn = document.createElement("button");
     undoBtn.id = "undoBtn";
-    undoBtn.textContent = "Undo";
+    undoBtn.textContent = "실행 취소";
 
     // 내보내기 옵션
     const exportRangeSelect = document.createElement("select");
     exportRangeSelect.id = "exportRangeSelect";
-    ["All","Matched","Open","Selected"].forEach(opt => {
+    ["전체","매칭된 항목","열린 항목","선택된 항목"].forEach(opt => {
       const option = document.createElement("option");
       option.value = opt;
       option.text = opt;
@@ -436,7 +437,7 @@
 
     const exportTypeSelect = document.createElement("select");
     exportTypeSelect.id = "exportTypeSelect";
-    ["TEXT","JSON","CSV","Markdown","HTML"].forEach(opt => {
+    ["텍스트","JSON","CSV","마크다운","HTML"].forEach(opt => {
       const option = document.createElement("option");
       option.value = opt;
       option.text = opt;
@@ -447,28 +448,28 @@
     exportBtn.id = "exportBtn";
     exportBtn.textContent = "내보내기";
 
-    // 배경색 선택 (추가: 아주 옅은 회색, 파스텔톤 회색 추가)
+    // 배경 색상 선택
     const bgColorSelect = document.createElement("select");
     bgColorSelect.id = "bgColorSelect";
     [
-      { value: "white", label: "White" },
-      { value: "#fff0f5", label: "LavenderBlush" },
-      { value: "#f0fff0", label: "Honeydew" },
-      { value: "#f5fffa", label: "MintCream" },
-      { value: "#f0f8ff", label: "AliceBlue" },
-      { value: "#fafad2", label: "LightGoldenrodYellow" },
-      { value: "#ffe4e1", label: "MistyRose" },
-      { value: "#ffffe0", label: "LightYellow2" },
-      { value: "#fffdd0", label: "Cream (#fffdd0)" },
-      { value: "#fffde7", label: "ExtraLightYellow (#fffde7)" },
-      { value: "#fdfd96", label: "Pastel Yellow (#fdfd96)" },
-      { value: "#e6e6fa", label: "Lavender (#e6e6fa)" },
-      { value: "#ffe5b4", label: "Pastel Peach (#ffe5b4)" },
-      { value: "#e0ffff", label: "LightCyan (#e0ffff)" },
-      { value: "#d3d3d3", label: "LightGray (#d3d3d3)" },
-      { value: "#a9a9a9", label: "DarkGray (#a9a9a9)" },
-      { value: "#f5f5f5", label: "Very Light Gray (#f5f5f5)" },
-      { value: "#e0e0e0", label: "Pastel Gray (#e0e0e0)" },
+      { value: "white", label: "화이트" },
+      { value: "#fff0f5", label: "라벤더블러쉬" },
+      { value: "#f0fff0", label: "허니듀" },
+      { value: "#f5fffa", label: "민트크림" },
+      { value: "#f0f8ff", label: "앨리스블루" },
+      { value: "#fafad2", label: "라이트골든로드옐로우" },
+      { value: "#ffe4e1", label: "미스티로즈" },
+      { value: "#ffffe0", label: "라이트옐로우2" },
+      { value: "#fffdd0", label: "크림 (#fffdd0)" },
+      { value: "#fffde7", label: "엑스트라라이트옐로우 (#fffde7)" },
+      { value: "#fdfd96", label: "파스텔 옐로우 (#fdfd96)" },
+      { value: "#e6e6fa", label: "라벤더" },
+      { value: "#ffe5b4", label: "파스텔 피치" },
+      { value: "#e0ffff", label: "라이트시안" },
+      { value: "#d3d3d3", label: "라이트그레이" },
+      { value: "#a9a9a9", label: "다크그레이" },
+      { value: "#f5f5f5", label: "아주 연한 그레이" },
+      { value: "#e0e0e0", label: "파스텔 그레이" },
     ].forEach(({ value, label }) => {
       const op = document.createElement("option");
       op.value = value;
@@ -476,16 +477,16 @@
       bgColorSelect.appendChild(op);
     });
     const bgColorLabel = document.createElement("label");
-    bgColorLabel.textContent = "배경색:";
+    bgColorLabel.textContent = "배경 색상:";
     bgColorLabel.setAttribute("for", "bgColorSelect");
 
-    // 검색 결과 표시
+    // 검색 결과 개수 표시
     const resultCount = document.createElement("div");
     resultCount.classList.add("search-result-count");
     resultCount.id = "resultCount";
-    resultCount.textContent = "검색 결과 없음";
+    resultCount.textContent = "매칭 없음";
 
-    // 컨트롤 박스 구성
+    // 기능 탭(컨트롤 패널) 조립
     controls.appendChild(searchBox);
     controls.appendChild(radioAnd);
     controls.appendChild(labelAnd);
@@ -546,7 +547,7 @@
   }
 
   // ============================================
-  // 4. 자주 사용하는 DOM 요소 캐싱
+  // 4. 자주 사용하는 DOM 엘리먼트 캐싱
   // ============================================
   const searchBox = document.getElementById("searchInput");
   const radioAnd = document.getElementById("searchLogicAnd");
@@ -583,7 +584,7 @@
   });
 
   // ============================================
-  // 6. 수정 모달 관련 기능 및 이벤트 핸들러
+  // 6. 수정 모달 기능 및 이벤트 핸들러
   // ============================================
   let currentEditSpan = null;
   function openEditModal(oldText) {
@@ -625,14 +626,14 @@
   function handleDeleteClick(e) {
     const msg = e.target.closest(".message");
     if (!msg) return;
-    if (!confirm("정말 이 메시지를 삭제하시겠습니까?")) return;
+    if (!confirm("이 메시지를 삭제하시겠습니까?")) return;
     pushUndo({ action: "delete", target: msg, oldParent: msg.parentNode, oldNextSibling: msg.nextSibling });
     msg.remove();
   }
 
   undoBtn.addEventListener("click", () => {
     if (App.undoStack.length === 0) {
-      alert("더 이상 되돌릴 작업이 없습니다.");
+      alert("더 이상 실행 취소할 작업이 없습니다.");
       return;
     }
     const last = popUndo();
@@ -662,12 +663,12 @@
         }
         break;
       default:
-        console.warn("알 수 없는 Undo 액션:", last.action);
+        console.warn("알 수 없는 실행 취소 작업:", last.action);
     }
   });
 
   // ============================================
-  // 7. 대화 박스 초기화 및 처리 (#root 내 conversation 처리)
+  // 7. 대화 박스 초기화 및 처리 (#root 내부)
   // ============================================
   const conversationNodes = document.querySelectorAll("#root > .conversation");
   conversationNodes.forEach((container, index) => {
@@ -677,14 +678,14 @@
 
     const delConvBtn = document.createElement("button");
     delConvBtn.classList.add("delete-conversation-btn");
-    delConvBtn.textContent = "이 박스 삭제";
+    delConvBtn.textContent = "박스 삭제";
 
     const convCheck = document.createElement("input");
     convCheck.type = "checkbox";
     convCheck.classList.add("conversation-checkbox");
     convCheck.dataset.index = index;
 
-    const oldTitle = titleElement.innerText.replace("이 박스 삭제", "").trim();
+    const oldTitle = titleElement.innerText.replace("박스 삭제", "").trim();
     titleElement.innerHTML = "";
     titleElement.appendChild(convCheck);
 
@@ -700,7 +701,7 @@
     container.querySelectorAll(".message").forEach(m => {
       let textSpan = m.querySelector(".message-text");
       if (!textSpan) {
-        const rawTxt = m.innerText.replace(/수정\s*삭제\s*$/, "").trim();
+        const rawTxt = m.innerText.replace(/Edit\s*Delete\s*$/, "").trim();
         m.innerHTML = "";
         textSpan = document.createElement("span");
         textSpan.classList.add("message-text");
@@ -744,9 +745,15 @@
     });
 
     delConvBtn.addEventListener("click", () => {
-      if (!confirm("정말 이 대화 박스를 삭제하시겠습니까?")) return;
+      if (!confirm("이 대화 박스를 삭제하시겠습니까?")) return;
       const originalObj = App.originalOrder.find(obj => obj.container === container);
-      pushUndo({ action: "deleteConversation", target: container, oldParent: container.parentNode, oldNextSibling: container.nextSibling, originalObj });
+      pushUndo({ 
+        action: "deleteConversation", 
+        target: container, 
+        oldParent: container.parentNode, 
+        oldNextSibling: container.nextSibling, 
+        originalObj 
+      });
       container.remove();
       App.originalOrder = App.originalOrder.filter(obj => obj.container !== container);
     });
@@ -755,7 +762,7 @@
   });
 
   // ============================================
-  // 8. 전체 펼치기/접기 및 정렬/순서 복원 기능
+  // 8. 전체 확장/접기, 정렬, 순서 복원 기능
   // ============================================
   expandAllBtn.addEventListener("click", () => {
     document.querySelectorAll(".content-box").forEach(box => {
@@ -773,7 +780,7 @@
 
   sortByCountBtn.addEventListener("click", () => {
     if (App.searchCounts.size === 0) {
-      resultCount.textContent = "정렬할 검색 결과가 없습니다.";
+      resultCount.textContent = "정렬할 매칭 항목이 없습니다.";
       return;
     }
     applySearchSortingAndIntensity();
@@ -782,15 +789,15 @@
   resetOrderBtn.addEventListener("click", () => {
     const remainingOrder = App.originalOrder.filter(obj => document.body.contains(obj.container));
     if (!remainingOrder.length) {
-      resultCount.textContent = "대화 박스가 없습니다.";
+      resultCount.textContent = "대화 박스를 찾을 수 없습니다.";
       return;
     }
     remainingOrder.sort((a, b) => a.index - b.index).forEach(obj => root.appendChild(obj.container));
-    resultCount.textContent = "원래 순서 복원 완료";
+    resultCount.textContent = "원래 순서로 복원되었습니다.";
   });
 
   // ============================================
-  // 9. 검색 및 하이라이트 관련 함수 (정규식 캐싱 및 그룹화 적용)
+  // 9. 검색 및 하이라이트 함수
   // ============================================
   function clearAllHighlights() {
     document.querySelectorAll(".search-highlight").forEach(sh => {
@@ -805,8 +812,8 @@
     App.allHighlightedTexts = [];
     App.highlightGroups = [];
     App.currentGroupIndex = 0;
-    App.searchCounts.clear();
-    resultCount.textContent = "검색 결과 없음";
+    App.searchCounts.clear();  // 중요: 이전 검색 결과 초기화
+    resultCount.textContent = "매칭 없음";
     if (miniPanelBody) miniPanelBody.innerHTML = "<h4>결과 없음</h4>";
   }
 
@@ -845,7 +852,6 @@
     textNode.parentNode.replaceChild(frag, textNode);
   }
 
-  // 주어진 검색어 목록에 대해 정규식 배열 생성
   function buildRegexArray(terms, caseSensitive, isRegex) {
     return terms.map(term => {
       if (!isRegex) {
@@ -856,7 +862,6 @@
     });
   }
 
-  // === 그룹화 함수 ===
   function groupHighlights(highlights, threshold = 100) {
     const sorted = highlights.slice().sort((a, b) => {
       const boxA = a.closest('.content-box');
@@ -888,68 +893,81 @@
     return groups;
   }
 
-  // ★ 새롭게 추가: 검색 결과에 따른 정렬 및 배경색 강도 적용 함수 ★
-function applySearchSortingAndIntensity() {
-  if (App.searchCounts.size === 0) return;
-  const counts = Array.from(App.searchCounts.values());
-  const maxCount = Math.max(...counts);
-  // 검색어 포함 대화 상자들을 검색 개수 내림차순 정렬
-  const sortedMatched = Array.from(App.searchCounts.entries())
-       .sort((a, b) => b[1] - a[1])
-       .map(e => e[0]);
-       
-  sortedMatched.forEach((conv, index) => {
-    const contentBox = conv.querySelector(".content-box");
-    if (contentBox) {
+  // ============================================
+  // 10. 정렬 및 하이라이트된 박스 강조
+  //      --> 검색어가 많이 포함된 박스를 상단으로 배치
+  // ============================================
+  function applySearchSortingAndIntensity() {
+    if (App.searchCounts.size === 0) return;
+    const counts = Array.from(App.searchCounts.values());
+    const maxCount = Math.max(...counts);
+
+    // 매칭이 있는 박스 정렬 (내림차순)
+    const sortedMatched = Array.from(App.searchCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(e => e[0]);
+
+    // 매칭이 없는 박스 (원래 순서대로)
+    const unmatched = App.originalOrder
+      .filter(obj => !App.searchCounts.has(obj.container))
+      .sort((a, b) => a.index - b.index)
+      .map(obj => obj.container);
+
+    // 정렬된 박스들을 상단으로 배치
+    sortedMatched.forEach(conv => {
+      root.appendChild(conv);
+    });
+    unmatched.forEach(conv => {
+      root.appendChild(conv);
+    });
+
+    // 첫 번째(매칭 최다) 박스는 강조, 나머지는 약하게 표시
+    sortedMatched.forEach((conv, index) => {
+      const contentBox = conv.querySelector(".content-box");
+      if (!contentBox) return;
       if (index === 0) {
-        // 가장 상위 그룹은 고정으로 Cream 색상
-        contentBox.style.backgroundColor = "#fffdd0";
+        contentBox.style.backgroundColor = "#fffdd0"; // 크림색
       } else {
         const count = App.searchCounts.get(conv);
-        const factor = count / maxCount; // 0 ~ 1 사이
-        // 새로운 범위: 최고(가장 많은 매치)일 때 92.5%, 최저일 때 95% (첫 그룹인 Cream(#fffdd0, 약 91%)보다 옅음)
-        const newLightness = 95 - factor * 2.5;
+        const factor = count / maxCount; // 0 ~ 1
+        const newLightness = 95 - factor * 2.5; // 가벼운 파스텔 색조
         contentBox.style.backgroundColor = `hsl(50, 70%, ${newLightness}%)`;
       }
-    }
-  });
-  // 검색어가 포함되지 않은 대화 상자들은 원래 순서대로 재배치
-  const unmatched = App.originalOrder.filter(obj => !App.searchCounts.has(obj.container))
-                     .sort((a, b) => a.index - b.index)
-                     .map(obj => obj.container);
-  sortedMatched.forEach(conv => {
-    root.appendChild(conv);
-  });
-  unmatched.forEach(conv => {
-    root.appendChild(conv);
-  });
-}
+    });
+  }
 
-
-
+  // ============================================
+  // 11. 검색 수행 (하이라이트, 정렬, 스크롤)
+  // ============================================
   function performSearch() {
-    clearAllHighlights();
+    clearAllHighlights(); // 이전 검색 하이라이트/검색결과 초기화
+
     const val = searchBox.value.trim();
     if (!val) {
-      resultCount.textContent = "검색어가 없습니다.";
+      resultCount.textContent = "키워드가 제공되지 않았습니다.";
       if (miniPanelBody) miniPanelBody.innerHTML = "<h4>결과 없음</h4>";
       return;
     }
+
     const terms = val.split(",").map(t => t.trim()).filter(t => t);
     if (!terms.length) {
-      resultCount.textContent = "검색어가 없습니다.";
+      resultCount.textContent = "키워드가 제공되지 않았습니다.";
       if (miniPanelBody) miniPanelBody.innerHTML = "<h4>결과 없음</h4>";
       return;
     }
+
     const caseSensitive = caseCheck.checked;
     const isAnd = radioAnd.checked;
     const isRegex = regexCheck.checked;
     const regexArray = buildRegexArray(terms, caseSensitive, isRegex);
+
     let totalMatches = 0;
+    // 1) 각 대화 박스에서 텍스트 하이라이트 처리 및 매칭 수 집계
     document.querySelectorAll("#root > .conversation").forEach(conv => {
       const contentBox = conv.querySelector(".content-box");
       if (!contentBox) return;
       const textSpans = contentBox.querySelectorAll(".message-text");
+
       textSpans.forEach(span => {
         let matchedAll = true;
         let matchedAny = false;
@@ -966,6 +984,7 @@ function applySearchSortingAndIntensity() {
           regexArray.forEach(regex => highlightDomTree(span, regex));
         }
       });
+
       const matchedInBox = contentBox.querySelectorAll(".search-highlight").length;
       if (matchedInBox > 0) {
         totalMatches += matchedInBox;
@@ -973,43 +992,63 @@ function applySearchSortingAndIntensity() {
         contentBox.classList.add("open");
       }
     });
-    App.allHighlightedTexts = Array.from(document.querySelectorAll("#root .search-highlight"));
-    App.highlightGroups = groupHighlights(App.allHighlightedTexts);
-    App.currentGroupIndex = 0;
+
+    // 2) 매칭된 항목이 있으면 정렬, 상단 배치 및 스크롤
     if (totalMatches > 0) {
-      // 검색 성공 시, 검색 결과 정렬 및 배경색(파스텔톤) 적용과 함께
+      // 박스를 매칭순으로 정렬
       applySearchSortingAndIntensity();
-      resultCount.textContent = `총 ${totalMatches}개.`;
+
+      // 정렬 후 하이라이트 DOM을 다시 수집하여 그룹화
+      App.allHighlightedTexts = Array.from(document.querySelectorAll("#root .search-highlight"));
+      App.highlightGroups = groupHighlights(App.allHighlightedTexts);
+      App.currentGroupIndex = 0;
+
+      resultCount.textContent = `총 ${totalMatches}개 매칭됨.`;
+
+      // 가장 매칭 많은 박스의 첫 번째 하이라이트로 스크롤 이동
       moveToGroupHighlight();
+
+      // 미니 패널 목록 새로 생성
       buildMiniList();
     } else {
-      resultCount.textContent = "검색 결과 없음";
+      resultCount.textContent = "매칭 없음";
       if (miniPanelBody) miniPanelBody.innerHTML = "<h4>결과 없음</h4>";
     }
   }
 
-  // 그룹 단위로 하이라이트 이동 (한 그룹 내의 첫 번째 하이라이트로 이동)
+  // ============================================
+  // 12. 하이라이트 이동 관련 함수
+  // ============================================
   function moveToGroupHighlight() {
-    if (!App.highlightGroups || App.highlightGroups.length === 0) return;
+    if (!App.highlightGroups || App.highlightGroups.length === 0) {
+      resultCount.textContent = "검색 하이라이트를 찾을 수 없습니다.";
+      return;
+    }
     const group = App.highlightGroups[App.currentGroupIndex];
     const target = group[0];
     if (!target) return;
+
+    // 해당 하이라이트가 속한 content-box를 펼치기
     const cbox = target.closest(".content-box");
     if (cbox && !cbox.classList.contains("open")) {
       cbox.classList.add("open");
     }
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // 하이라이트 위치로 스크롤 (화면 상단 기준)
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // 현재 하이라이트 그룹 정보를 표시
     let cumulative = 0;
     for (let i = 0; i <= App.currentGroupIndex; i++) {
       cumulative += App.highlightGroups[i].length;
     }
     const total = App.allHighlightedTexts.length;
-    resultCount.textContent = `총 ${total}개. 현재 그룹 ${App.currentGroupIndex+1}/${App.highlightGroups.length} (누적: ${cumulative}/${total})`;
+    resultCount.textContent = `총 ${total}개 매칭됨. 그룹 ${App.currentGroupIndex+1}/${App.highlightGroups.length} (누적: ${cumulative}/${total})`;
   }
 
   function gotoNextHighlight() {
     if (!App.highlightGroups || App.highlightGroups.length === 0) {
-      resultCount.textContent = "검색된 하이라이트가 없습니다.";
+      resultCount.textContent = "검색 하이라이트가 없습니다.";
       return;
     }
     if (App.currentGroupIndex < App.highlightGroups.length - 1) {
@@ -1022,7 +1061,7 @@ function applySearchSortingAndIntensity() {
 
   function gotoPrevHighlight() {
     if (!App.highlightGroups || App.highlightGroups.length === 0) {
-      resultCount.textContent = "검색된 하이라이트가 없습니다.";
+      resultCount.textContent = "검색 하이라이트가 없습니다.";
       return;
     }
     if (App.currentGroupIndex > 0) {
@@ -1034,7 +1073,7 @@ function applySearchSortingAndIntensity() {
   }
 
   // ============================================
-  // 10. 미니 결과 패널 (문맥 미리보기) 생성 및 기능
+  // 13. 미니 결과 패널 생성 (컨텍스트 미리보기)
   // ============================================
   let miniPanel = document.querySelector(".mini-result-panel");
   let miniPanelBody;
@@ -1045,17 +1084,21 @@ function applySearchSortingAndIntensity() {
     miniPanel.style.height = "320px";
     miniPanel.style.top = "160px";
     miniPanel.style.left = "calc(100% - 320px)";
+
     const panelHeader = document.createElement("div");
     panelHeader.classList.add("mini-panel-header");
     panelHeader.textContent = "검색 결과";
     miniPanel.appendChild(panelHeader);
+
     miniPanelBody = document.createElement("div");
     miniPanelBody.classList.add("mini-panel-body");
     miniPanelBody.innerHTML = "<h4>결과 없음</h4>";
     miniPanel.appendChild(miniPanelBody);
+
     const resizer = document.createElement("div");
     resizer.classList.add("mini-resizer");
     miniPanel.appendChild(resizer);
+
     document.body.appendChild(miniPanel);
 
     let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
@@ -1145,13 +1188,13 @@ function applySearchSortingAndIntensity() {
   }
 
   // ============================================
-  // 11. 내보내기 기능
+  // 14. 내보내기 기능
   // ============================================
   exportBtn.addEventListener("click", () => {
     const range = exportRangeSelect.value;
     const fmt = exportTypeSelect.value;
     if (!root) {
-      alert("#root가 없어 내보낼 내용이 없습니다.");
+      alert("내보낼 콘텐츠의 #root 엘리먼트를 찾을 수 없습니다.");
       return;
     }
     const convList = document.querySelectorAll("#root > .conversation");
@@ -1159,15 +1202,15 @@ function applySearchSortingAndIntensity() {
     convList.forEach((container, idx) => {
       const titleEl = container.querySelector("h4");
       if (!titleEl) return;
-      const title = titleEl.innerText.replace("이 박스 삭제", "").trim() || `대화${idx+1}`;
+      const title = titleEl.innerText.replace("박스 삭제", "").trim() || `대화 ${idx+1}`;
       const contentBox = container.querySelector(".content-box");
-      if (range === "Open" && !contentBox.classList.contains("open")) return;
-      if (range === "Selected") {
+      if (range === "열린 항목" && !contentBox.classList.contains("open")) return;
+      if (range === "선택된 항목") {
         const ck = titleEl.querySelector(".conversation-checkbox");
         if (ck && !ck.checked) return;
       }
       let msgs = Array.from(contentBox.querySelectorAll(".message"));
-      if (range === "Matched") {
+      if (range === "매칭된 항목") {
         msgs = msgs.filter(m => m.querySelector(".search-highlight"));
         if (!msgs.length) return;
       }
@@ -1183,11 +1226,11 @@ function applySearchSortingAndIntensity() {
       return;
     }
     let fileContent = "";
-    let fileName = "대화로그_내보내기";
+    let fileName = "Conversation_Log_Export";
     if (fmt === "JSON") {
       fileContent = JSON.stringify(exportData, null, 2);
       fileName += ".json";
-    } else if (fmt === "TEXT") {
+    } else if (fmt === "텍스트") {
       const arr = exportData.map(b => `[${b.title}]\n` + b.messages.join("\n"));
       const BOM = "\uFEFF";
       fileContent = BOM + arr.join("\n--------------------------------\n");
@@ -1204,7 +1247,7 @@ function applySearchSortingAndIntensity() {
       const BOM = "\uFEFF";
       fileContent = BOM + lines.join("\n");
       fileName += ".csv";
-    } else if (fmt === "Markdown") {
+    } else if (fmt === "마크다운") {
       const md = exportData.map(d => {
         const msgs = d.messages.map(m => `- ${m}`).join("\n");
         return `### ${d.title}\n\n${msgs}\n`;
@@ -1264,7 +1307,7 @@ ${htmlArray.join("\n")}
   });
 
   // ============================================
-  // 12. 검색 및 결과 이동, 방향키 이벤트 (중복 제거)
+  // 15. 검색, 내비게이션, 키보드 단축키
   // ============================================
   searchBox.addEventListener("keypress", (e) => {
     if (e.key === "Enter") performSearch();
@@ -1274,7 +1317,9 @@ ${htmlArray.join("\n")}
   });
   highlightPrevBtn.addEventListener("click", gotoPrevHighlight);
   highlightNextBtn.addEventListener("click", gotoNextHighlight);
+
   document.addEventListener("keydown", (ev) => {
+    // 예: 화살표 키로 이전/다음 결과 이동
     if (ev.key === "ArrowDown") {
       ev.preventDefault();
       gotoNextHighlight();
@@ -1283,5 +1328,4 @@ ${htmlArray.join("\n")}
       gotoPrevHighlight();
     }
   });
-
 })();
