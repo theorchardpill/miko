@@ -1043,8 +1043,8 @@
       cbox.classList.add("open");
     }
 
-    // (★여기서 scrollIntoView의 위치를 "start"로 수정)
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    // (★여기서 scrollIntoView의 위치를 "center"로 수정)
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
 
     // 현재가 몇 번째인지 표시
     let cumulative = 0;
