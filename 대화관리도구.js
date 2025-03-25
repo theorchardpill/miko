@@ -1034,8 +1034,8 @@
       cbox.classList.add("open");
     }
 
-    // 하이라이트 위치로 스크롤 (화면 상단 기준)
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    // 하이라이트 위치로 스크롤 
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
 
     // 현재 하이라이트 그룹 정보를 표시
     let cumulative = 0;
