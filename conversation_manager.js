@@ -1,7 +1,9 @@
+
 /**
  * ChatGPT 대화관리도구.js | ChatGPT Conversation Organizer
  * Version: 1.0.0
- * Description: A utility script to enhance the readability, searchability, and interactivity of ChatGPT-exported HTML conversations.
+ * Description: A utility script to enhance the readability, searchability,
+ * and interactivity of ChatGPT-exported HTML conversations.
  *
  * Author: Vincent
  * Blog: https://mikkorimimi.blogspot.com/
@@ -25,9 +27,9 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
-
 
 (function(){
   "use strict";
@@ -454,7 +456,7 @@
     exportBtn.id = "exportBtn";
     exportBtn.textContent = "Export";
 
-    // Background color selection (includes very light gray, pastel gray, etc.)
+    // Background color selection
     const bgColorSelect = document.createElement("select");
     bgColorSelect.id = "bgColorSelect";
     [
@@ -753,7 +755,13 @@
     delConvBtn.addEventListener("click", () => {
       if (!confirm("Are you sure you want to delete this conversation box?")) return;
       const originalObj = App.originalOrder.find(obj => obj.container === container);
-      pushUndo({ action: "deleteConversation", target: container, oldParent: container.parentNode, oldNextSibling: container.nextSibling, originalObj });
+      pushUndo({ 
+        action: "deleteConversation", 
+        target: container, 
+        oldParent: container.parentNode, 
+        oldNextSibling: container.nextSibling, 
+        originalObj 
+      });
       container.remove();
       App.originalOrder = App.originalOrder.filter(obj => obj.container !== container);
     });
@@ -797,7 +805,7 @@
   });
 
   // ============================================
-  // 9. Search and Highlight Functions (Regex caching and grouping)
+  // 9. Search and Highlight Functions
   // ============================================
   function clearAllHighlights() {
     document.querySelectorAll(".search-highlight").forEach(sh => {
@@ -812,7 +820,7 @@
     App.allHighlightedTexts = [];
     App.highlightGroups = [];
     App.currentGroupIndex = 0;
-    App.searchCounts.clear();
+    App.searchCounts.clear();  // 중요: 이전 검색 결과 초기화
     resultCount.textContent = "No Matches";
     if (miniPanelBody) miniPanelBody.innerHTML = "<h4>No results</h4>";
   }
@@ -852,7 +860,6 @@
     textNode.parentNode.replaceChild(frag, textNode);
   }
 
-  // Build an array of regex for given keywords
   function buildRegexArray(terms, caseSensitive, isRegex) {
     return terms.map(term => {
       if (!isRegex) {
@@ -863,7 +870,6 @@
     });
   }
 
-  // Grouping function for highlights
   function groupHighlights(highlights, threshold = 100) {
     const sorted = highlights.slice().sort((a, b) => {
       const boxA = a.closest('.content-box');
@@ -895,66 +901,82 @@
     return groups;
   }
 
-  // ★ Newly added: Function to apply sorting and intensity based on search results
+  // ============================================
+  // 10. 정렬 & 하이라이트된 박스 강조
+  //      --> 검색어가 많이 나오는 박스를 상단으로
+  // ============================================
   function applySearchSortingAndIntensity() {
     if (App.searchCounts.size === 0) return;
     const counts = Array.from(App.searchCounts.values());
     const maxCount = Math.max(...counts);
-    // Sort conversation boxes containing search keywords in descending order of match count
+
+    // 매칭 있는 박스
     const sortedMatched = Array.from(App.searchCounts.entries())
-         .sort((a, b) => b[1] - a[1])
-         .map(e => e[0]);
-         
-    sortedMatched.forEach((conv, index) => {
-      const contentBox = conv.querySelector(".content-box");
-      if (contentBox) {
-        if (index === 0) {
-          // Top group always has fixed Cream color
-          contentBox.style.backgroundColor = "#fffdd0";
-        } else {
-          const count = App.searchCounts.get(conv);
-          const factor = count / maxCount; // 0 ~ 1 range
-          // New range: 92.5% when max match, 95% when minimum (lighter than Cream)
-          const newLightness = 95 - factor * 2.5;
-          contentBox.style.backgroundColor = `hsl(50, 70%, ${newLightness}%)`;
-        }
-      }
-    });
-    // Reorder conversation boxes without search keywords to original order
-    const unmatched = App.originalOrder.filter(obj => !App.searchCounts.has(obj.container))
-                       .sort((a, b) => a.index - b.index)
-                       .map(obj => obj.container);
+      .sort((a, b) => b[1] - a[1]) // 내림차순
+      .map(e => e[0]);
+
+    // 매칭 없는 박스
+    const unmatched = App.originalOrder
+      .filter(obj => !App.searchCounts.has(obj.container))
+      .sort((a, b) => a.index - b.index)
+      .map(obj => obj.container);
+
+    // 상단으로 가져오기
     sortedMatched.forEach(conv => {
       root.appendChild(conv);
     });
     unmatched.forEach(conv => {
       root.appendChild(conv);
     });
+
+    // 첫 번째(매칭 최다) 박스는 진하게, 뒤쪽 박스는 약하게
+    sortedMatched.forEach((conv, index) => {
+      const contentBox = conv.querySelector(".content-box");
+      if (!contentBox) return;
+      if (index === 0) {
+        contentBox.style.backgroundColor = "#fffdd0"; // 크림색
+      } else {
+        const count = App.searchCounts.get(conv);
+        const factor = count / maxCount; // 0 ~ 1
+        const newLightness = 95 - factor * 2.5; // 가벼운 파스텔
+        contentBox.style.backgroundColor = `hsl(50, 70%, ${newLightness}%)`;
+      }
+    });
   }
 
+  // ============================================
+  // 11. 검색 수행(하이라이트, 정렬, 스크롤)
+  // ============================================
   function performSearch() {
-    clearAllHighlights();
+    clearAllHighlights(); // 이전 검색 하이라이트/검색결과 초기화
+
     const val = searchBox.value.trim();
     if (!val) {
       resultCount.textContent = "No keyword provided.";
       if (miniPanelBody) miniPanelBody.innerHTML = "<h4>No results</h4>";
       return;
     }
+
     const terms = val.split(",").map(t => t.trim()).filter(t => t);
     if (!terms.length) {
       resultCount.textContent = "No keyword provided.";
       if (miniPanelBody) miniPanelBody.innerHTML = "<h4>No results</h4>";
       return;
     }
+
     const caseSensitive = caseCheck.checked;
     const isAnd = radioAnd.checked;
     const isRegex = regexCheck.checked;
     const regexArray = buildRegexArray(terms, caseSensitive, isRegex);
+
     let totalMatches = 0;
+    // 1) 각 컨테이너에서 텍스트 하이라이트 + 매칭 수 세기
     document.querySelectorAll("#root > .conversation").forEach(conv => {
       const contentBox = conv.querySelector(".content-box");
       if (!contentBox) return;
       const textSpans = contentBox.querySelectorAll(".message-text");
+      let matchedInBox = 0;
+
       textSpans.forEach(span => {
         let matchedAll = true;
         let matchedAny = false;
@@ -971,21 +993,31 @@
           regexArray.forEach(regex => highlightDomTree(span, regex));
         }
       });
-      const matchedInBox = contentBox.querySelectorAll(".search-highlight").length;
+
+      matchedInBox = contentBox.querySelectorAll(".search-highlight").length;
       if (matchedInBox > 0) {
         totalMatches += matchedInBox;
         App.searchCounts.set(conv, matchedInBox);
         contentBox.classList.add("open");
       }
     });
-    App.allHighlightedTexts = Array.from(document.querySelectorAll("#root .search-highlight"));
-    App.highlightGroups = groupHighlights(App.allHighlightedTexts);
-    App.currentGroupIndex = 0;
+
+    // 2) 매치가 하나 이상이면 정렬 + 상단 박스 배치 + 스크롤
     if (totalMatches > 0) {
-      // On successful search, apply sorting and pastel background intensity
+      // 박스를 매칭순으로 정렬
       applySearchSortingAndIntensity();
+
+      // 정렬된 후 하이라이트 DOM을 새로 수집해서 그룹 만들기
+      App.allHighlightedTexts = Array.from(document.querySelectorAll("#root .search-highlight"));
+      App.highlightGroups = groupHighlights(App.allHighlightedTexts);
+      App.currentGroupIndex = 0;
+
       resultCount.textContent = `Total ${totalMatches} matches.`;
+
+      // 첫 번째 하이라이트로 이동(= 가장 매칭 많은 박스의 첫 하이라이트)
       moveToGroupHighlight();
+
+      // mini panel 목록도 새로 생성
       buildMiniList();
     } else {
       resultCount.textContent = "No Matches";
@@ -993,17 +1025,28 @@
     }
   }
 
-  // Move to first highlight of the current group
+  // ============================================
+  // 12. 하이라이트 이동 관련 함수
+  // ============================================
   function moveToGroupHighlight() {
-    if (!App.highlightGroups || App.highlightGroups.length === 0) return;
+    if (!App.highlightGroups || App.highlightGroups.length === 0) {
+      resultCount.textContent = "No search highlights found.";
+      return;
+    }
     const group = App.highlightGroups[App.currentGroupIndex];
     const target = group[0];
     if (!target) return;
+
+    // 해당 하이라이트가 속한 content-box를 펼쳐주기
     const cbox = target.closest(".content-box");
     if (cbox && !cbox.classList.contains("open")) {
       cbox.classList.add("open");
     }
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // (★여기서 scrollIntoView의 위치를 "start"로 수정)
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // 현재가 몇 번째인지 표시
     let cumulative = 0;
     for (let i = 0; i <= App.currentGroupIndex; i++) {
       cumulative += App.highlightGroups[i].length;
@@ -1039,7 +1082,7 @@
   }
 
   // ============================================
-  // 10. Create Mini Results Panel (Context Preview)
+  // 13. Create Mini Results Panel (Context Preview)
   // ============================================
   let miniPanel = document.querySelector(".mini-result-panel");
   let miniPanelBody;
@@ -1050,17 +1093,21 @@
     miniPanel.style.height = "320px";
     miniPanel.style.top = "160px";
     miniPanel.style.left = "calc(100% - 320px)";
+
     const panelHeader = document.createElement("div");
     panelHeader.classList.add("mini-panel-header");
     panelHeader.textContent = "Search Results";
     miniPanel.appendChild(panelHeader);
+
     miniPanelBody = document.createElement("div");
     miniPanelBody.classList.add("mini-panel-body");
     miniPanelBody.innerHTML = "<h4>No results</h4>";
     miniPanel.appendChild(miniPanelBody);
+
     const resizer = document.createElement("div");
     resizer.classList.add("mini-resizer");
     miniPanel.appendChild(resizer);
+
     document.body.appendChild(miniPanel);
 
     let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
@@ -1150,7 +1197,7 @@
   }
 
   // ============================================
-  // 11. Export Functionality
+  // 14. Export Functionality
   // ============================================
   exportBtn.addEventListener("click", () => {
     const range = exportRangeSelect.value;
@@ -1269,7 +1316,7 @@ ${htmlArray.join("\n")}
   });
 
   // ============================================
-  // 12. Search, Navigation, and Keyboard Event Handlers
+  // 15. Search, Navigation, Keyboard shortcuts
   // ============================================
   searchBox.addEventListener("keypress", (e) => {
     if (e.key === "Enter") performSearch();
@@ -1279,7 +1326,9 @@ ${htmlArray.join("\n")}
   });
   highlightPrevBtn.addEventListener("click", gotoPrevHighlight);
   highlightNextBtn.addEventListener("click", gotoNextHighlight);
+
   document.addEventListener("keydown", (ev) => {
+    // 예) 화살표로 이전/다음 이동
     if (ev.key === "ArrowDown") {
       ev.preventDefault();
       gotoNextHighlight();
@@ -1288,5 +1337,5 @@ ${htmlArray.join("\n")}
       gotoPrevHighlight();
     }
   });
-
 })();
+
